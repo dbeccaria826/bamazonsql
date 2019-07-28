@@ -45,8 +45,8 @@ let inventory = () => {
 
     connection.query("SELECT * FROM inventory", (error, results) => {
         const productTable = new table( {
-            head: ["ITEM_ID", "ITEM_NAME","PRICE"],
-            colWidths: [20, 50, 30]
+            head: ["ITEM_ID", "ITEM_NAME","CATEGORY", "PRICE"],
+            colWidths: [20, 50, 30, 30]
         })
 
         if(error) throw error
@@ -57,7 +57,7 @@ let inventory = () => {
             let info = results[item]
             
             // console.log(`${results[item].item_id} ${results[item].item_name} ${results[item].category_name}`)
-            productTable.push([info.item_id, info.item_name, `$${info.price}`])
+            productTable.push([info.item_id, info.item_name, info.category_name, `$${info.price}`])
         }
         console.log(productTable.toString())
     })
