@@ -13,7 +13,7 @@ CREATE TABLE inventory (
     sales DECIMAL(10, 2),
     PRIMARY KEY (item_id)
 );
-
+--Create another table for purchases/updating stock/ and checkout cart--
 INSERT INTO inventory (item_name, category_name, price, quantity) VALUES
 ('Wooster 2inch Sash Brush', 'Hardware', '17.99','45'),
 ('32ft Ladder', 'Hardware', '450.00','12'),

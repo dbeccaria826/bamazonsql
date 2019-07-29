@@ -3,7 +3,8 @@ const root_password = require("./password")
 const table = require("cli-table")
 const inquirer = require("inquirer")
 // setting up mysql connection
-
+//EASY PART: SETTING THIS UP
+//Hard Part: Logic.
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -17,9 +18,10 @@ const productTable = new table( {
     colWidths: [20, 50, 30, 30]
 })
 let pushTable = (productTable,a,b,c,d) => {
-     
-    return productTable.push([a,b,c,d])
+     return productTable.push([a,b,c,d])
 }
+
+
 
 //User wants to make a selection if they decide to buy anything
 //Return a list of items person can choose from and place into their "cart"
@@ -36,12 +38,12 @@ let getCustomer = () => {
         }
     ]).then(response => {
         response.sale === "Yes" ? sortItems() : console.log("Come back soon")
-        
-    })
+
+
+})
 }
 
-
-
+//Shows the whole table (without filtered results)
 let inventory = () => {
 
     connection.connect((error) => {
@@ -65,10 +67,11 @@ let inventory = () => {
         }
         console.log(productTable.toString())
     })
+    makePurchase()
 }
 
 
-
+//Gives person a choice to narrow down what they might want to buy
 let sortItems = () => {
     inquirer.prompt([
         {
@@ -101,8 +104,9 @@ let sortItems = () => {
               inventory()
         }
     })
+ 
 }
-
+//Sorts items from db based on choice made
 let whichItems = (catName) => {
     connection.connect((error) => {
         if(error) throw error
@@ -115,7 +119,7 @@ let whichItems = (catName) => {
         
         console.log(productTable.toString())
     })
-
+   makePurchase()
 }
 
 let getItems = (catName, results) => {
@@ -124,6 +128,7 @@ let getItems = (catName, results) => {
         switch(catName) {
             case "Hardware":
                 pushTable(productTable,info.item_id, info.item_name, info.category_name, `$${info.price}`)
+               
                 break;
             case "Fashion":
                 pushTable(productTable,info.item_id, info.item_name, info.category_name, `$${info.price}`)
@@ -145,6 +150,66 @@ let getItems = (catName, results) => {
             
         }
 }
+}
+
+// getCustomer()
+// When a purchase is made the stock or quantity has to be updated however many of the items someone purchased.
+// This has to happen every time.
+// If an item is out of stock it can be deleted from the base and the person can be notified.
+// JOIN INNER UPDATE
+let makePurchase = () => {
+    let purchaseTable = new table({
+        header:["ITEM_NAME", "PRICE","QUANTITY"],
+        colWidths:[20, 20, 20]
+    })
+    // console.log('Select Item by ID')
+    inquirer.prompt([
+        {
+            type:'input',
+            name:'select',
+            message:"Select Item by ID",
+            validate: function(name) {
+                return /^[0-9]*$/.test(name)
+            }
+            
+        },
+        {
+            type:'input',
+            name:'howmany',
+            message:'How many of this item?',
+            validate: function(name) {
+                return /^[0-9]*$/.test(name)
+            }
+        }
+    ]).then(response => {
+        
+        connection.query(`SELECT * FROM inventory WHERE item_id='${response.select}'`, (error, result) => {
+            if(error) throw error
+            
+            
+            for(let item in result) {
+                let info = result[item];
+                
+                if(response.howmany > info.quantity) {
+                    console.log("Out of Stock!")
+                } 
+            }
+            //We get the response, which one and how many
+            
+            // console.log(purchaseTable.toString())
+        })
+        // console.log(newQuantity)
+        console.log(response.select)
+        console.log(response.howmany)
+        //
+        connection.query("UPDATE inventory SET quantity = quantity - ? WHERE item_id = ?", [response.howmany, response.select] , (error,show) => {
+            if(error) throw error
+
+
+            console.log(show)
+        })
+    })
+
 }
 
 getCustomer()
