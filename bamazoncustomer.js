@@ -35,7 +35,7 @@ let getCustomer = () => {
     
         }
     ]).then(response => {
-        response.sale === "Yes" ? inventory() : console.log("Come back soon")
+        response.sale === "Yes" ? sortItems() : console.log("Come back soon")
         
     })
 }
@@ -75,49 +75,76 @@ let sortItems = () => {
             type:"list",
             name:"categories",
             message:"Anything in particular?",
-            choices:['Hardware','Electronics','Fashion','Literature','Scholarly','Sports','General']
+            choices:['Hardware','Electronics','Fashion','Literature','Scholarly','Sports','All']
         }
     ]).then(response => {
         switch(response.categories) {
             case "Hardware":
-                whichItems()
+                whichItems('Hardware')
                 break;
             case "Electronics":
-                whichItems()
+                whichItems('Electronics')
                 break;
             case "Fashion":
-                whichItems()
+                whichItems('Fashion')
                 break;
             case "Literature":
-                whichItems()
+                whichItems('Literature')
                 break;
             case "Sports":
-                whichItems()
+                whichItems('Sports')
                 break;
             case "Scholarly":
-                whichItems()
+                whichItems('Scholarly')
                 break;
             default:
-                console.log('oops')
+              inventory()
         }
     })
 }
 
-let whichItems = () => {
+let whichItems = (catName) => {
     connection.connect((error) => {
         if(error) throw error
 
     })
 
-    connection.query("SELECT * FROM inventory WHERE category_name='Hardware' OR category_name='Electronics'OR category_name='Fasion' OR category_name='Literature' OR category_name='Scholarly' OR category_name='Sports'", (error, results) => {
+    connection.query(`SELECT * FROM inventory WHERE category_name='${catName}'`, (error, results) => {
         if(error) throw error
+        getItems(catName, results)
         
-        for(let item in results) {
-            let info = results[item]
-            pushTable(productTable, info.item_id, info.item_name, info.category_name, `$${info.price}`)
-        }
         console.log(productTable.toString())
     })
 
 }
-sortItems()
+
+let getItems = (catName, results) => {
+    for(let item in results) {
+        let info = results[item]
+        switch(catName) {
+            case "Hardware":
+                pushTable(productTable,info.item_id, info.item_name, info.category_name, `$${info.price}`)
+                break;
+            case "Fashion":
+                pushTable(productTable,info.item_id, info.item_name, info.category_name, `$${info.price}`)
+                break;
+            case "Electronics":
+                pushTable(productTable,info.item_id, info.item_name, info.category_name, `$${info.price}`)
+                break;
+            case "Literature":
+                pushTable(productTable,info.item_id, info.item_name, info.category_name, `$${info.price}`)
+                break;
+            case "Sports":
+                pushTable(productTable,info.item_id, info.item_name, info.category_name, `$${info.price}`)
+                break;
+            case "Scholarly":
+                pushTable(productTable,info.item_id, info.item_name, info.category_name, `$${info.price}`)
+                break;
+            default:
+               inventory()
+            
+        }
+}
+}
+
+getCustomer()
