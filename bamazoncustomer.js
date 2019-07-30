@@ -207,7 +207,7 @@ let makePurchase = () => {
             // console.log(show)
 
         })
-        connection.query("UPDATE inventory SET sales = ? WHERE item_id = ?", [response.howmany, response.select], (error, show) => {
+        connection.query("UPDATE inventory SET sales = sales + ? WHERE item_id = ?", [response.howmany, response.select], (error, show) => {
             if (error) throw error
 
 
