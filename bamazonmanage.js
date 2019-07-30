@@ -14,51 +14,74 @@ const connection = mysql.createConnection({
     database: 'bamazon'
 })
 const viewTable = new table({
-    head: ["ITEM_ID", "ITEM_NAME","CATEGORY", "PRICE", "QUANTITY"],
-    colWidths: [30, 30, 30, 30, 30]
+    head: ["ITEM_ID", "ITEM_NAME","CATEGORY", "PRICE", "QUANTITY", "SALES"],
+    colWidths: [10, 30, 30, 15, 15, 15]
 })
+let pushTable = (viewTable, results) => {
+    for (let item in results) {
+        let info = results[item]
+        viewTable.push([info.item_id, info.item_name, info.category_name, `$${info.price}`, info.quantity, info.sales])
 
-inquirer.prompt([
-    {
-        type:'list',
-        name:'manager',
-        message:'List of currently stocked products',
-        choices:['View Products for Sale','View Low Inventory','Add to Inventory','Add New Product']
     }
-]).then(manage => {
-    switch(manage.manager) {
-        case 'View Products for Sale':
-            viewInventory()
-            break;
-        case 'View Low Inventory':
-            //function
-            break;
-        case 'Add to Inventory':
-            //function
-            break;
-        case 'Add New Product':
-            //function
-            break;
-        default:
-            console.log("something bad happened")
-    }
-})
+}
+let manager = () => {
+    inquirer.prompt([
+        {
+            type:'list',
+            name:'manager',
+            message:'List of currently stocked products',
+            choices:['View Products for Sale','View Low Inventory','Add to Inventory','Add New Product']
+        }
+    ]).then(manage => {
+        switch(manage.manager) {
+            case 'View Products for Sale':
+                viewInventory()
+                break;
+            case 'View Low Inventory':
+                viewLowInventory()
+                break;
+            case 'Add to Inventory':
+                //function
+                break;
+            case 'Add New Product':
+                //function
+                break;
+            default:
+                console.log("something bad happened")
+        }
+    })
+
+}
+
 
 let viewInventory = () => {
+   
     connection.connect((error) =>{
         if(error) throw error
     }) 
         
     
-    connection.query("SELECT * FROM inventory", (err,response) => {
-        // console.log(response)
-      for(let item in response) {
-          let info = response[item]
-          viewTable.push([info.item_id, info.item_name, info.category_name, `$${info.price}`, info.quantity])
-      }
-      console.log(viewTable.toString())
+    connection.query("SELECT * FROM inventory", (err, results) => {
+        // console.log(results)
+        pushTable(viewTable, results)
+        console.log(viewTable.toString())
     })
     
     connection.end()
 }
 
+let viewLowInventory = () => {
+   
+    connection.connect((error) => {
+        if(error) throw error
+    })
+
+    connection.query("SELECT * FROM inventory WHERE quantity < 10", (error, results) => {
+        pushTable(viewTable, results)
+        console.log(viewTable.toString())
+    })
+    connection.end()
+}
+
+//Add to inventory, separate prompt
+// manager()
