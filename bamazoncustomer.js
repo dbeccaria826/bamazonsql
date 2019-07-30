@@ -60,14 +60,14 @@ let inventory = () => {
         
         for(let item in results) {
             let info = results[item]
-            
-            // console.log(`${results[item].item_id} ${results[item].item_name} ${results[item].category_name}`)
-            // productTable.push([info.item_id, info.item_name, info.category_name, `$${info.price}`])
             pushTable(productTable,info.item_id, info.item_name, info.category_name, `$${info.price}`)
         }
         console.log(productTable.toString())
     })
-    makePurchase()
+    setTimeout(() => {
+       makePurchase() 
+    }, 500);
+   
 }
 
 
@@ -78,7 +78,7 @@ let sortItems = () => {
             type:"list",
             name:"categories",
             message:"Anything in particular?",
-            choices:['Hardware','Electronics','Fashion','Literature','Scholarly','Sports','All']
+            choices:['Hardware','Electronics','Fashion','Literature','Sports','All']
         }
     ]).then(response => {
         switch(response.categories) {
@@ -104,7 +104,7 @@ let sortItems = () => {
               inventory()
         }
     })
- 
+  
 }
 //Sorts items from db based on choice made
 let whichItems = (catName) => {
@@ -115,11 +115,15 @@ let whichItems = (catName) => {
 
     connection.query(`SELECT * FROM inventory WHERE category_name='${catName}'`, (error, results) => {
         if(error) throw error
-        getItems(catName, results)
+        
+      
+            getItems(catName, results)
         
         console.log(productTable.toString())
     })
-   makePurchase()
+    setTimeout(() => {
+        makePurchase()
+    }, 500); 
 }
 
 let getItems = (catName, results) => {
@@ -142,9 +146,6 @@ let getItems = (catName, results) => {
             case "Sports":
                 pushTable(productTable,info.item_id, info.item_name, info.category_name, `$${info.price}`)
                 break;
-            case "Scholarly":
-                pushTable(productTable,info.item_id, info.item_name, info.category_name, `$${info.price}`)
-                break;
             default:
                inventory()
             
@@ -158,10 +159,7 @@ let getItems = (catName, results) => {
 // If an item is out of stock it can be deleted from the base and the person can be notified.
 // JOIN INNER UPDATE
 let makePurchase = () => {
-    let purchaseTable = new table({
-        header:["ITEM_NAME", "PRICE","QUANTITY"],
-        colWidths:[20, 20, 20]
-    })
+    
     // console.log('Select Item by ID')
     inquirer.prompt([
         {
@@ -186,30 +184,43 @@ let makePurchase = () => {
         connection.query(`SELECT * FROM inventory WHERE item_id='${response.select}'`, (error, result) => {
             if(error) throw error
             
-            
+            //What happens if a customer puts in 0 for howmany? 
+            //Controlling customer response
             for(let item in result) {
                 let info = result[item];
                 
                 if(response.howmany > info.quantity) {
                     console.log("Out of Stock!")
-                } 
+                } else if (response.howmany > 0) {
+                   let customerTotal = response.howmany * info.price
+                    console.log(`Your new total is ${customerTotal}`)
+                }
             }
             //We get the response, which one and how many
             
-            // console.log(purchaseTable.toString())
+           
         })
-        // console.log(newQuantity)
-        console.log(response.select)
-        console.log(response.howmany)
-        //
+            
+       
         connection.query("UPDATE inventory SET quantity = quantity - ? WHERE item_id = ?", [response.howmany, response.select] , (error,show) => {
             if(error) throw error
 
-
+            // console.log(show)
+            
+        }) 
+        connection.query("UPDATE inventory SET sales = ? WHERE item_id = ?", [response.howmany, response.select], (error, show) => {
+            if(error) throw error
             console.log(show)
         })
+        connection.end()
+        setTimeout(() => {
+            getCustomer()
+        }, 1000);
+       
     })
-
+    
 }
+//Need to display the person's total after they've selected how many of what item to purchase
 
+//console.log('Your new total') response.howmany + info.price how many user wants + price of the item
 getCustomer()
