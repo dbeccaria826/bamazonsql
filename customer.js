@@ -16,13 +16,13 @@ const connection = mysql.createConnection({
 
 
 const productTable = new table({
-    head: ["ITEM_ID", "ITEM_NAME", "CATEGORY", "PRICE"],
+    head: ["ITEM_ID", "ITEM_NAME", "DEPARTMENT", "PRICE"],
     colWidths: [20, 50, 30, 30]
 })
 let pushTable = (productTable, results) => {
     for (let item in results) {
         let info = results[item]
-        productTable.push([info.item_id, info.item_name, info.category_name, `$${info.price}`])
+        productTable.push([info.item_id, info.item_name, info.department, `$${info.price}`])
 
     }
 
@@ -112,7 +112,7 @@ let sortItems = () => {
 let whichItems = (catName) => {
 
 
-    connection.query(`SELECT * FROM inventory WHERE category_name='${catName}'`, (error, results) => {
+    connection.query(`SELECT * FROM inventory WHERE department='${catName}'`, (error, results) => {
         if (error) throw error
         pushTable(productTable, results)
         getItems(catName)
@@ -145,13 +145,13 @@ let getItems = (catName) => {
             return console.log(productTable.toString())
 
         default:
-
+            console.log("something went wrong ")
 
     }
 
 }
 
-// getCustomer()
+
 // When a purchase is made the stock or quantity has to be updated however many of the items someone purchased.
 // This has to happen every time.
 // If an item is out of stock it can be deleted from the base and the person can be notified.
@@ -181,7 +181,7 @@ let makePurchase = () => {
 
         connection.query(`SELECT * FROM inventory WHERE item_id='${response.select}'`, (error, result) => {
             if (error) throw error
-
+            
             //What happens if a customer puts in 0 for howmany? 
             //Update db to reflect total number of units sold per customer transaction
             //Controlling customer response
@@ -189,34 +189,36 @@ let makePurchase = () => {
                 let info = result[item];
 
                 if (response.howmany > info.quantity) {
-                    console.log("Out of Stock!")
+                    connection.end()
+                    console.log("Out of Stock! Make another selection")
                 } else if (response.howmany > 0) {
                     let customerTotal = response.howmany * info.price
                     console.log(`Your new total is ${customerTotal}`)
+                    //Information sent to superviser (total sales) after user purchase. How do we get this information into departments table?
+                    connection.query("UPDATE inventory SET sales = sales + ? WHERE item_id = ?", [customerTotal, response.select], (error, show) => {
+                        if (error) throw error
+                        console.log('Sales updated in inventory')
+                    })
+                    // connection.query("UPDATE departments SET sales = sales FROM inventory WHERE department_id = item_id ", (err, res) => {
+                    //     console.log(res)
+                    // })
+                    connection.end()
                 }
             }
             //We get the response, which one and how many
-
+            
 
         })
+           
 
-
-        connection.query("UPDATE inventory SET quantity = quantity - ? WHERE item_id = ?", [response.howmany, response.select], (error, show) => {
+        connection.query("UPDATE inventory SET quantity = GREATEST(quantity - ?, 0) WHERE item_id = ?", [response.howmany, response.select], (error, show) => {
             if (error) throw error
 
-            // console.log(show)
+            console.log('Quantity -!')
 
         })
-        connection.query("UPDATE inventory SET sales = sales + ? WHERE item_id = ?", [response.howmany, response.select], (error, show) => {
-            if (error) throw error
-
-
-        })
-        
-        connection.end()
-
     })
-
+    
 }
 //Need to display the person's total after they've selected how many of what item to purchase
 
