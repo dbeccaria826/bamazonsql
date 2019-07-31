@@ -14,7 +14,7 @@ const connection = mysql.createConnection({
     database: 'bamazon'
 })
 const viewTable = new table({
-    head: ["ITEM_ID", "ITEM_NAME","CATEGORY", "PRICE", "QUANTITY", "SALES"],
+    head: ["ITEM_ID", "ITEM_NAME","DEPARTMENT", "PRICE", "QUANTITY", "SALES"],
     colWidths: [10, 30, 30, 15, 15, 15]
 })
 let pushTable = (viewTable, results) => {

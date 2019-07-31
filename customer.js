@@ -22,7 +22,7 @@ const productTable = new table({
 let pushTable = (productTable, results) => {
     for (let item in results) {
         let info = results[item]
-        productTable.push([info.item_id, info.item_name, info.department, `$${info.price}`])
+        productTable.push([info.item_id, info.item_name, info.department_name, `$${info.price}`])
 
     }
 
@@ -112,7 +112,7 @@ let sortItems = () => {
 let whichItems = (catName) => {
 
 
-    connection.query(`SELECT * FROM inventory WHERE department='${catName}'`, (error, results) => {
+    connection.query(`SELECT * FROM inventory WHERE department_name='${catName}'`, (error, results) => {
         if (error) throw error
         pushTable(productTable, results)
         getItems(catName)
