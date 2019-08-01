@@ -36,9 +36,9 @@
   <h3>Customer</h3>
 <li><img src="./images/customer.png"></li>
    <h3>Manager</h3>
-<li><img src="./images/manager1.png"></li>
+<li><img src="./images/manager1.PNG"></li>
    <h3>Supervisor</h3>
-<li><img src="./images/supervisor.png"></li>
+<li><img src="./images/supervisor.PNG"></li>
 </ul>
 
 
