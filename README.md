@@ -33,8 +33,11 @@
 ##Screenshots
 
 <ul>
+  <h3>Customer</h3>
 <li><img src="./images/customer.png"></li>
+   <h3>Manager</h3>
 <li><img src="./images/manager1.png"></li>
+   <h3>Supervisor</h3>
 <li><img src="./images/supervisor.png"></li>
 </ul>
 
