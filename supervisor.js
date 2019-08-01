@@ -23,50 +23,52 @@ let superVisor = () => {
             type:'list',
             name:'action',
             message:'Welcome',
-            choices:['View Product Sales by Department','Creat New Department','Exit']
+            choices:['View Product Sales by Department','Create New Department','Exit']
         }
     ]).then(response => {
         switch(response.action) {
             case 'View Product Sales by Department':
-                //function
+                getProfit()
                 break;
             case 'Create New Department':
-                //function
+                createNewDepartment()
                 break;
             default:
-                console.log("You'll never get a promotion")
+                console.log("See you later")
+                connection.end()
         }
     })
 }
-
-//Collecting aggregate data from customer table
-// let getDepartmentSales = () => {
-//     connection.query("SELECT SUM(sales) AS product_sales FROM inventory GROUP BY department", (error, results)=> {
-//         for(let item in results) {
-//             console.log(results[item])
-//         }
-//     })
-//     connection.end()
-    
-// }
-
-// getDepartmentSales()
-
-// let getTotalSales = () => {
-//     connection.query("SELECT departments FROM inventory GROUP BY department", (error, result) => {
-//        for(let item in result) {
-//            console.log(result[item])
-//        }
-//     })
-//     connection.end()
-// }
-
-
-// getTotalSales()
-
-// superVisor()
-
-
+let createNewDepartment = () => {
+    inquirer.prompt([
+        {
+            type:"input",
+            name:"name",
+            message:"Department Name",
+            validate: function(name) {
+                return /^\w\D*/.test(name)
+            }
+            
+        },
+        {
+            type:"input",
+            name:"overhead",
+            message:"Enter Over Head Costs",
+            validate:function(name) {
+                return /^\d*/.test(name)
+            }
+            
+                
+        }
+        
+    ]).then(res => {
+        connection.query(`INSERT INTO departments (department_name, over_head_costs) VALUES ('${res.name}','${res.overhead}')`,(err, res) => {
+            if(err) throw err
+            console.log("Department Created...")
+        })
+        connection.end()
+    })
+}
 let getProfit = () => {
     connection.query("SELECT department_id, departments.department_name, over_head_costs, SUM(sales) AS product_sales, SUM(sales) - over_head_costs AS total_profit FROM departments INNER JOIN inventory ON departments.department_name = inventory.department_name GROUP BY department_id", (err, res) => {
         // console.log(res)
@@ -78,4 +80,6 @@ let getProfit = () => {
     })
     connection.end()
 }
-getProfit()
+// createNewDepartment()
+superVisor()
+

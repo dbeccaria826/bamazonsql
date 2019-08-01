@@ -7,6 +7,12 @@
 
 - cli-table
 
+
+##NodeJS
+
+##MySQL
+
+
 ##Basic Store-Front Interface
 
 - Used from the command line
@@ -17,7 +23,20 @@
 
 - For Managers: Can look at the current inventory (this table includes prices), view products that are currently low in stock, update the inventory, and add new products.
 
-- For Supervisors(BETA): Current a supervisor can see the total product sales per department.(Not fully functional, yet)
+- For Supervisors(WORKING): Current a supervisor can see the total product sales per department. Also, the supervisor portion of this app can create new departments which the manager portion can add items to, customer can buy from. 
+
+
+
+
+##DEMO:https://drive.google.com/file/d/1NHti32-C6xMjIrV9qY4WnboMoaI05VzR/view
+
+##Screenshots
+
+<ul>
+<li><img src="./images/customer.png"></li>
+<li><img src="./images/manager1.png"></li>
+<li><img src="./images/supervisor.png"></li>
+</ul>
 
 
 

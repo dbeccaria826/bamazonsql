@@ -14,13 +14,13 @@ const connection = mysql.createConnection({
     database: 'bamazon'
 })
 const viewTable = new table({
-    head: ["ITEM_ID", "ITEM_NAME","DEPARTMENT", "PRICE", "QUANTITY", "SALES"],
-    colWidths: [10, 30, 30, 15, 15, 15]
+    head: ["ITEM_ID", "ITEM_NAME","DEPARTMENT", "PRICE", "QUANTITY"],
+    colWidths: [10, 30, 30, 15, 15]
 })
 let pushTable = (viewTable, results) => {
     for (let item in results) {
         let info = results[item]
-        viewTable.push([info.item_id, info.item_name, info.department, `$${info.price}`, info.quantity, info.sales])
+        viewTable.push([info.item_id, info.item_name, info.department_name, `$${info.price}`, info.quantity])
 
     }
 }
@@ -120,7 +120,7 @@ let addNewItem = () => {
             name: 'price',
             message:'Enter price',
             validate: function(name) {
-                return /^\d{0,2}(\.\d{1,2})?$/.test(name)
+                return /^\d{0,4}(\.\d{1,2})?$/.test(name)
             }
         },
         {
@@ -130,15 +130,10 @@ let addNewItem = () => {
             validate:function(name) {
                 return /^[0-9]*$/.test(name)
             }
-        },
-        {
-            type:'input',
-            name:'sales',
-            message:'Enter 0',
-          
         }
+        
     ]).then(response => {
-        connection.query(`INSERT INTO inventory (item_name, department, price, quantity, sales) VALUES ('${response.itemname}','${response.category}','${response.price}','${response.quantity}','${response.sales}')`, (error, results) => {
+        connection.query(`INSERT INTO inventory (item_name, department_name, price, quantity) VALUES ('${response.itemname}','${response.category}','${response.price}','${response.quantity}')`, (error, results) => {
             if(error) throw error
             console.log(results)
         })

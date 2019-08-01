@@ -82,7 +82,7 @@ let sortItems = () => {
             type: "list",
             name: "categories",
             message: "Anything in particular?",
-            choices: ['Hardware', 'Electronics', 'Fashion', 'Literature', 'Sports', 'All']
+            choices: ['Hardware', 'Electronics', 'Fashion', 'Literature', 'Sports', 'Hygene', 'All']
         }
     ]).then(response => {
         switch (response.categories) {
@@ -101,6 +101,9 @@ let sortItems = () => {
                 break;
             case "Sports":
                 whichItems('Sports')
+                break;
+            case "Hygene":
+                whichItems('Hygene')
                 break;
             default:
                 return inventory()
@@ -142,6 +145,8 @@ let getItems = (catName) => {
             return console.log(productTable.toString())
 
         case "Sports":
+            return console.log(productTable.toString())
+        case "Hygene":
             return console.log(productTable.toString())
 
         default:
@@ -197,7 +202,7 @@ let makePurchase = () => {
                     //Information sent to superviser (total sales) after user purchase. How do we get this information into departments table?
                     connection.query("UPDATE inventory SET sales = sales + ? WHERE item_id = ?", [customerTotal, response.select], (error, show) => {
                         if (error) throw error
-                        console.log('Sales updated in inventory')
+                        console.log('Thanks for your purchase!')
                     })
                     // connection.query("UPDATE departments SET sales = sales FROM inventory WHERE department_id = item_id ", (err, res) => {
                     //     console.log(res)
@@ -214,7 +219,7 @@ let makePurchase = () => {
         connection.query("UPDATE inventory SET quantity = GREATEST(quantity - ?, 0) WHERE item_id = ?", [response.howmany, response.select], (error, show) => {
             if (error) throw error
 
-            console.log('Quantity -!')
+            
 
         })
     })
