@@ -8,12 +8,12 @@
 - cli-table
 
 
-##NodeJS
+-NodeJS
 
-##MySQL
+-MySQL
 
 
-##Basic Store-Front Interface
+<h1>Basic Store-Front Interface</h1>
 
 - Used from the command line
 
@@ -28,9 +28,15 @@
 
 
 
-##DEMO:https://drive.google.com/file/d/1NHti32-C6xMjIrV9qY4WnboMoaI05VzR/view
+<h1>DEMOs</h1>
+-Supervisor
+https://drive.google.com/file/d/11fhMsN8So-fXGVuDgXZB-k0FQuwgDv5R/view
+-Manager
+https://drive.google.com/file/d/1Q61xi394DVCMRZaaXiikghEtBI63pIqZ/view
+-Customer
+https://drive.google.com/file/d/1G1V3bM2JpJ8q6hMb4oNb3u_XG7CoqxTP/view
 
-##Screenshots
+<h1>Screenshots</h1>
 
 <ul>
   <h3>Customer</h3>
